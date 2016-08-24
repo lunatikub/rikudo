@@ -4,6 +4,7 @@
 
 #include "rikudo.h"
 #include "rikudo_reverse.h"
+#include "rikudo_cfg.h"
 
 #include "rikudo_36.h"
 #include "rikudo_60.h"
@@ -61,11 +62,6 @@ static inline void rikudo_trans_reverse(rikudo_t   *ri,
         sscanf(_src, "%hhd", &src);
         sscanf(_dst + 1, "%hhd,", &dst);
 
-        /* printf("src  %s\n", _src); */
-        /* printf("dst  %s\n", _dst + 1); */
-        /* printf("iter %s\n", iter); */
-        /* printf("src %d dst %d\n", src, dst); */
-
         if (n % 2 == 0) {
             ri->src_t[n / 2].x = matrix[src - 1].x;
             ri->src_t[n / 2].y = matrix[src - 1].y;
@@ -118,6 +114,9 @@ static inline void rikudo_case_reverse_root(rikudo_t *ri,
     ri->grid->s[root->x + root->y * ri->w] = ROOT;
 }
 
+static pos_t    *matrix = NULL;
+static uint32_t  end    = 0;
+
 void rikudo_reverse_from_html(rikudo_t   *ri,
                               const char *grid,
                               const char *nr_t,
@@ -125,7 +124,6 @@ void rikudo_reverse_from_html(rikudo_t   *ri,
 {
     int8_t val[MAX_VAL] = { };
     uint8_t nr_val = 0;
-    pos_t *matrix = NULL;
     pos_t *undefined = NULL;
     pos_t *root = NULL;
     const char *iter = grid;
@@ -139,6 +137,7 @@ void rikudo_reverse_from_html(rikudo_t   *ri,
 
     ri->start = 1;
     ri->end = nr_val;
+    end = nr_val;
     rikudo_reverse_sz_set(ri);
     ri->grid = rikudo_grid_new(ri->h, ri->w);
 
@@ -154,15 +153,42 @@ void rikudo_reverse_from_html(rikudo_t   *ri,
             root = &root_60;
             break;
         default:
-            fprintf(stderr, "matrix needed\n");
+            fprintf(stderr, "rikudo_reverce.c(%u): matrix needed\n", __LINE__);
             abort();
     };
 
     rikudo_case_reverse_matrix(ri, matrix, val);
     rikudo_case_reverse_undefined(ri, undefined);
     rikudo_case_reverse_root(ri, root);
-
     sscanf(nr_t, "%d", &ri->nr_t);
     rikudo_trans_alloc(ri);
     rikudo_trans_reverse(ri, trans, matrix);
 }
+
+#ifdef RIKUDO_CFG_DUMP
+
+void rikudo_reverse_dump_to_html(rikudo_t *ri,
+                                 grid_t   *grid)
+{
+    uint8_t i = 0;
+
+    printf("[");
+    for (i = 0; i < end; ++i) {
+        printf("%i",  grid->g[matrix[i].x + matrix[i].y * ri->w]);
+        if (i != end -1 ) {
+            printf(",");
+        }
+    }
+    printf("]");
+}
+
+#else
+
+void rikudo_reverse_dump_to_html(rikudo_t *ri,
+                                 grid_t   *grid)
+{
+    (void)ri;
+    (void)grid;
+}
+
+#endif

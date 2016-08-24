@@ -188,4 +188,95 @@
 #define SGET(_g,_x,_y,_w)    ((_g)->s[(_x) + (_y) * (_w)])
 #define SSET(_g,_x,_y,_w,_v) ((_g)->s[(_x) + (_y) * (_w)] = (_v))
 
+#define L_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)        \
+    ({                                          \
+        int8_t v = -3;                          \
+        _dx = _sx - 1;                          \
+        _dy = _sy;                              \
+        if (_sx > 0)                            \
+            v = (_a)[_dy * _w + _dx];           \
+        v;                                      \
+    })                                          \
+
+#define R_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)        \
+    ({                                          \
+        int8_t v = -3;                          \
+        _dx = _sx + 1;                          \
+        _dy = _sy;                              \
+        if (_sx < _w - 1)                       \
+            v = (_a)[_dy * _w + _dx];           \
+        v;                                      \
+    })                                          \
+
+#define DR_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)       \
+    ({                                          \
+        int8_t v = -3;                          \
+        if (_sy % 2 == 0) {                     \
+            _dx = _sx;                          \
+            _dy = _sy + 1;                      \
+            if (_sy < _h - 1)                   \
+                v = (_a)[_dy * _w + _dx];       \
+        } else {                                \
+            _dx = _sx + 1;                      \
+            _dy = _sy + 1;                      \
+            if (_sy < _h - 1 && _sx < _w - 1)   \
+                v = (_a)[_dy * _w + _dx];       \
+        }                                       \
+        v;                                      \
+    })                                          \
+
+#define DL_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)       \
+    ({                                          \
+        int8_t v = -3;                          \
+        if (_sy % 2 == 0) {                     \
+            _dx = _sx - 1;                      \
+            _dy = _sy + 1;                      \
+            if (_sx > 0 && _sy < _h - 1)        \
+                v = (_a)[_dy * _w + _dx];       \
+        } else {                                \
+            _dx = _sx;                          \
+            _dy = _sy + 1;                      \
+            if (_sy < _h - 1)                   \
+                v = (_a)[_dy * _w + _dx];       \
+        }                                       \
+        v;                                      \
+    })                                          \
+
+#define UR_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)       \
+    ({                                          \
+        int8_t v = -3;                          \
+        if (_sy % 2 == 0) {                     \
+            _dx = _sx;                          \
+            _dy = _sy - 1;                      \
+            if (_sy > 0)                        \
+                v = (_a)[_dy * _w + _dx];       \
+        } else {                                \
+            _dx = _sx + 1;                      \
+            _dy = _sy - 1;                      \
+            if (_sy > 0 && _sx < _w - 1)        \
+                v = (_a)[_dy * _w + _dx];       \
+        }                                       \
+        v;                                      \
+    })                                          \
+
+#define UL_AGET(_a,_sx,_sy,_dx,_dy,_h,_w)       \
+    ({                                          \
+        int8_t v = -3;                          \
+        if (_sy % 2 == 0) {                     \
+            _dx = _sx - 1;                      \
+            _dy = _sy - 1;                      \
+            if (_sx > 0 && _sy > 0)             \
+                v = (_a)[_dy * _w + _dx];       \
+        } else {                                \
+            _dx = _sx;                          \
+            _dy = _sy - 1;                      \
+            if (_sy > 0)                        \
+                v = (_a)[_dy * _w + _dx];       \
+        }                                       \
+        v;                                      \
+    })
+
+#define AGET(_a,_x,_y,_w)    ((_a)[(_x) + (_y) * (_w)])
+#define ASET(_a,_x,_y,_w,_v) ((_a)[(_x) + (_y) * (_w)] = (_v))
+
 #endif /* !RIKUDO_MACRO_H_ */

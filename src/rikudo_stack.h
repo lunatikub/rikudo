@@ -19,6 +19,7 @@ typedef struct stack {
 } stack_t;
 
 void rikudo_stack_init(stack_t *st);
+void rikudo_stack_clean(stack_t *st);
 
 void rikudo_stack_push(stack_t *st,
                        grid_t  *grid,

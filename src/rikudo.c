@@ -8,11 +8,12 @@
 #include "rikudo_grid.h"
 #include "rikudo_stack.h"
 #include "rikudo_x.h"
-#include "rikudo_read.h"
 #include "rikudo_macro.h"
 #include "rikudo_ia.h"
 #include "rikudo_reverse.h"
 #include "rikudo_play.h"
+#include "rikudo_connex.h"
+#include "rikudo_cycle.h"
 
 #define RIKUDO_MAX_POS (6)
 
@@ -24,15 +25,21 @@ static inline void rikudo_init(rikudo_t *ri)
 {
     memset(ri, 0, sizeof(rikudo_t));
     rikudo_stack_init(&ri->st);
-    rikudo_x_init();
-    rikudo_play_init(ri);
+    rikudo_stat_init(&ri->stat);
+    rikudo_cycle_init();
+    /* rikudo_x_init(); */
+    /* rikudo_play_init(); */
 }
 
 static inline void rikudo_clean(rikudo_t *ri)
 {
     rikudo_grid_free(ri->grid);
-    rikudo_x_clean();
-    rikudo_play_clean(ri);
+    free(ri->src_t);
+    free(ri->dst_t);
+    free(ri->lconst);
+    rikudo_stack_clean(&ri->st);
+    /* rikudo_x_clean(); */
+    /* rikudo_play_clean(ri); */
 }
 
 static inline int rikudo_free_play(rikudo_t *ri,
@@ -48,6 +55,7 @@ static inline int rikudo_free_play(rikudo_t *ri,
     nr_pos = rikudo_next_pos_get(curr_grid, curr_pos, next_pos, ri->h, ri->w);
 
     for (i = 0; i < nr_pos; ++i) {
+        RIKUDO_STAT_INC_NR_GRID(&ri->stat);
         new_grid = rikudo_grid_duplicate(curr_grid, ri->h, ri->w);
         GSET(new_grid, next_pos[i].x, next_pos[i].y, ri->w, curr_val + 1);
 
@@ -56,8 +64,14 @@ static inline int rikudo_free_play(rikudo_t *ri,
             return 0;
         }
 
+#ifdef RIKUDO_CFG_CONNEX
+        if (curr_val > rikudo_connex(ri, new_grid)) {
+            rikudo_grid_free(new_grid);
+            return 0;
+        }
+#endif
+
         rikudo_stack_push(&ri->st, new_grid, curr_val + 1, next_pos[i]);
-        /* rikudo_dump(ri, new_grid); */
     }
 
     return 0;
@@ -80,16 +94,13 @@ static inline int rikudo_const_play(rikudo_t *ri,
             if (rikudo_trans_check(ri, curr_grid)) {
                 return 0;
             }
-            rikudo_dump(ri, curr_grid);
-            getchar();
-            /* rikudo_play(ri, curr_grid); */
+            rikudo_reverse_dump_to_html(ri, curr_grid);
             return 1;
         }
 
+        RIKUDO_STAT_INC_NR_GRID(&ri->stat);
         new_grid = rikudo_grid_duplicate(curr_grid, ri->h, ri->w);
         rikudo_stack_push(&ri->st, new_grid, curr_val + 1, *target_pos);
-
-        /* rikudo_dump(ri, new_grid); */
     }
 
     return 0;
@@ -125,23 +136,20 @@ int main(int argc, char **argv)
 
     rikudo_reverse_from_html(&ri, argv[1], argv[2], argv[3]);
 
-/* rikudo_read_from_file(&ri, argv[1]); */
     rikudo_const_list_create(&ri);
     rikudo_intuition(&ri);
-    /* rikudo_dump(&ri, ri.grid); */
 
     rikudo_do(&ri, ri.grid, &ri.start_pos, 1);
 
     while (!rikudo_stack_is_empty(&ri.st)) {
         entry = rikudo_stack_pop(&ri.st);
-
-        /* rikudo_dump(ri, entry->grid); */
         if (rikudo_do(&ri, entry->grid, &entry->pos, entry->val)) {
             rikudo_stack_free(entry);
             break;
         }
         rikudo_stack_free(entry);
     }
+
 
     /* pthread_t tid[N_THREAD]; */
     /* uint8_t i = 0; */
@@ -154,7 +162,7 @@ int main(int argc, char **argv)
     /*     pthread_join(tid[i], NULL); */
     /* } */
 
+    rikudo_cycle_dump();
     rikudo_clean(&ri);
-
     return 0;
 }

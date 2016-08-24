@@ -68,7 +68,7 @@ int8_t rikudo_target_get(rikudo_t *ri,
 {
     int8_t target = 0;
 
-    while (ri->lconst[target].val < curr_val) {
+    while (ri->lconst[target].val <= curr_val) {
         ++target;
     }
 

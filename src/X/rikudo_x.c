@@ -6,8 +6,6 @@
 #include "rikudo.h"
 #include "rikudo_macro.h"
 
-#define RIKUDO_X
-
 #ifdef RIKUDO_X
 
 #define RED    (1)
@@ -174,7 +172,8 @@ void rikudo_dump(rikudo_t   *ri,
     for (i = 0; i < ri->nr_const; ++i) {
         mvprintw(__Y, 5 + X_DBG + i * 3, "%2d", ri->lconst[i].val);
     }
-    mvprintw(__Y, 5 + X_DBG + i * 3, "]]");
+    mvprintw(__Y++, 5 + X_DBG + i * 3, "]]");
+    mvprintw(__Y++, X_DBG, "tested grid: %20lu", ri->nr_grid);
 
     refresh();
     /* getchar(); */
