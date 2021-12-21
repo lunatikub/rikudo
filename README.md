@@ -1,0 +1,2 @@
+# rikudo
+Rikudo solver
