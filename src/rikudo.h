@@ -2,6 +2,7 @@
 #define __RIKUDO_H__
 
 #include <stdint.h>
+#include <stdbool.h>
 
 enum level {
   BEGINNER,
@@ -18,7 +19,8 @@ struct link {
 };
 
 struct rikudo {
-  uint8_t* grid;
+  uint8_t *grid;
+  bool *to_fill;
   struct link *links;
   enum level lvl;
   uint8_t nr;

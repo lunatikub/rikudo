@@ -4,7 +4,15 @@
 
 #include <rikudo.h>
 
-static void set_start_end(struct rikudo *rikudo)
+static inline void set_to_fill(struct rikudo *rikudo)
+{
+  rikudo->to_fill = calloc(rikudo->nr, sizeof(bool));
+  for (uint8_t i = 0; i < rikudo->nr; ++i) {
+    rikudo->to_fill[i] = (rikudo->grid[i] == 0);
+  }
+}
+
+static inline void set_start_end(struct rikudo *rikudo)
 {
   for (uint8_t i = 0; i < rikudo->nr; ++i) {
     if (rikudo->grid[i] == 1) {
@@ -43,6 +51,7 @@ struct rikudo* rikudo_create(const uint8_t *grid,
   memcpy(rikudo->links, links, sizeof(struct link) * nr_link);
 
   set_start_end(rikudo);
+  set_to_fill(rikudo);
 
   return rikudo;
 }
@@ -51,5 +60,10 @@ void rikudo_destroy(struct rikudo *rikudo)
 {
   free(rikudo->grid);
   free(rikudo->links);
+  free(rikudo->to_fill);
   free(rikudo);
 }
+
+/* void rikudo_solve(struct rikudo *rikudo) */
+/* { */
+/* } */

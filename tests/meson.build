@@ -9,6 +9,7 @@ test_beginner = executable(
     test_inc,
   ],
   c_args: flags + ['-DUNIT_TEST_TARGET'],
+  dependencies: [ curses ],
 )
 
 test('beginner', test_beginner)

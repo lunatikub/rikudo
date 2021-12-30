@@ -27,7 +27,7 @@
  *                   113  112  111  110  109  108  107
  *
  */
-static uint8_t neighbors[][NR_NEIGHBOR] = {
+static const uint8_t neighbors[][NR_NEIGHBOR] = {
 
   /* circle 1 */
   /*   0 */ { 5, 6, 7, 8, 1, -1 },

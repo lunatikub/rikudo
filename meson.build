@@ -41,6 +41,19 @@ test_inc = include_directories('tests')
 
 src = files(
   'src/rikudo.c',
+  'src/pretty_print.c',
 )
 
+cc = meson.get_compiler('c')
+curses = dependency('ncurses', required: false, disabler: true)
+
 subdir('tests')
+
+executable(
+  'rikudo',
+  src,
+  'src/main.c',
+  include_directories: inc,
+  c_args: flags,
+  dependencies: [ curses ],
+)
