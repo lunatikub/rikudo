@@ -4,6 +4,7 @@
  */
 
 OPT_BOOL(pretty_print)
+OPT_INT(step_by_step)
 
 /**
  * The following code is used to ensure that each file which
@@ -15,4 +16,10 @@ OPT_BOOL(pretty_print)
   #error "Macro OPT_BOOL must be defined !"
 #else
   #undef OPT_BOOL
+#endif
+
+#if !defined OPT_INT
+  #error "Macro OPT_INT must be defined !"
+#else
+  #undef OPT_INT
 #endif

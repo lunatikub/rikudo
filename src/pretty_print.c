@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdlib.h>
 #include <ncurses.h>
 #include <assert.h>
@@ -186,11 +187,23 @@ static inline void prettry_print_meta(const struct solver *handle, uint8_t val)
   mvprintw(3, 1, "%-20s %12u", "number of cells", rikudo->nr);
   mvprintw(4, 1, "%-20s %12u", "number of links", rikudo->nr_link);
   mvprintw(6, 1, "%-20s %12u", "value", val);
-  mvprintw(7, 1, "%-20s %12u", "failed", handle->failed);}
+  mvprintw(7, 1, "%-20s %12u", "failed", handle->failed);
+}
 
-void pretty_print_current(const struct solver *handle, uint8_t idx, uint8_t val)
+static inline void pretty_print_wait(void)
 {
-  if (opt_get_pretty_print() == false) {
+  int step = opt_get_step_by_step();
+
+  if (step == -1) {
+    getch();
+  } else if (step > 0) {
+    usleep(step);
+  }
+}
+
+void pretty_print_step(const struct solver *handle, uint8_t idx, uint8_t val)
+{
+  if (opt_get_pretty_print() == false || opt_get_step_by_step() == 0) {
     return;
   }
   prettry_print_meta(handle, val);
@@ -198,7 +211,7 @@ void pretty_print_current(const struct solver *handle, uint8_t idx, uint8_t val)
   prettry_print_links(handle->rikudo);
   mvprintw(8, 1, "%-20s %12u", "current index", idx);
   refresh();
-  getch();
+  pretty_print_wait();
 }
 
 void pretty_print_solution(const struct solver *handle)

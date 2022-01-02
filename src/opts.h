@@ -11,6 +11,7 @@ bool parse_options(int argc, char **argv);
  * Getters.
  */
 #define OPT_BOOL(name) bool opt_get_ ## name(void);
+#define OPT_INT(name) int opt_get_ ## name(void);
 
 #include "opts_def.h"
 

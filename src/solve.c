@@ -60,6 +60,8 @@ static bool rikudo_solve_backtracking(struct solver *handle, uint8_t idx, uint8_
   uint8_t next_val = val + 1;
   uint8_t next_idx;
 
+  pretty_print_step(handle, idx, val);
+
   /* A solution has been found, stop the recursion. */
   if (handle->solution_found == true) {
     return true;
