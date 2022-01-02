@@ -32,6 +32,28 @@ static inline bool rikudo_is_solution(struct solver *handle, uint8_t next_val)
   return false;
 }
 
+static inline bool rikudo_check_links(struct solver *handle)
+{
+  struct rikudo *rikudo = handle->rikudo;
+
+  for (unsigned l = 0; l < rikudo->nr_link; ++l) {
+    struct link *link = &rikudo->links[l];
+
+    int v1 = rikudo->grid[link->idx_1];
+    int v2 = rikudo->grid[link->idx_2];
+
+    if (v1 == 0 || v2 == 0) {
+      continue;
+    }
+
+    int diff = v1 - v2;
+    if (diff != -1 && diff != 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
 static bool rikudo_solve_backtracking(struct solver *handle, uint8_t idx, uint8_t val)
 {
   struct rikudo *rikudo = handle->rikudo;
@@ -41,6 +63,11 @@ static bool rikudo_solve_backtracking(struct solver *handle, uint8_t idx, uint8_
   /* A solution has been found, stop the recursion. */
   if (handle->solution_found == true) {
     return true;
+  }
+
+  /* If any link is not valid then the grid is not valid. */
+  if (rikudo_check_links(handle) == false) {
+    return false;
   }
 
   /* Next value is a constant cell: has to be find in the neighborhood,
