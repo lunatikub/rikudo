@@ -11,12 +11,17 @@ enum cell_style {
   START,
   LINK,
 };
+struct pretty_print_ctx {
+  int row;
+  int col;
+};
 
-struct pretty_print_ctx* pretty_print_init(void)
+static struct pretty_print_ctx ctx;
+
+void pretty_print_init(void)
 {
-  struct pretty_print_ctx *ctx = calloc(1, sizeof(*ctx));
   initscr();
-  getmaxyx(stdscr, ctx->row, ctx->col);
+  getmaxyx(stdscr, ctx.row, ctx.col);
   curs_set(0);
   start_color();
   init_pair(NORMAL, COLOR_WHITE, COLOR_BLACK);
@@ -24,12 +29,10 @@ struct pretty_print_ctx* pretty_print_init(void)
   init_pair(CENTER, COLOR_BLUE, COLOR_BLACK);
   init_pair(START, COLOR_MAGENTA, COLOR_BLACK);
   init_pair(LINK, COLOR_RED, COLOR_BLACK);
-  return ctx;
 }
 
-void pretty_print_exit(struct pretty_print_ctx *ctx)
+void pretty_print_exit(void)
 {
-  free(ctx);
   endwin();
 }
 
@@ -66,23 +69,24 @@ static inline int get_pp_y(int row, int y)
   return row / 2 + y * 3 - 3;
 }
 
-static inline enum cell_style get_style(const struct rikudo *rikudo, unsigned i)
+static inline enum cell_style get_style(const struct solver *handle, unsigned i)
 {
+  struct rikudo *rikudo = handle->rikudo;
+
   if (rikudo->grid[i] == 1 || rikudo->grid[i] == rikudo->nr) {
     return START;
   }
-  if (rikudo->to_fill[i] == false) {
+  if (handle->constant[rikudo->grid[i]] == true) {
     return FILLED;
   }
   return NORMAL;
 }
 
-static inline void pretty_print_cell(const struct pretty_print_ctx *ctx,
-                                     int x, int y, const char *str,
+static inline void pretty_print_cell(int x, int y, const char *str,
                                      enum cell_style style)
 {
-  x = get_pp_x(ctx->col, x);
-  y = get_pp_y(ctx->row, y);
+  x = get_pp_x(ctx.col, x);
+  y = get_pp_y(ctx.row, y);
 
   attron(COLOR_PAIR(style));
   mvprintw(y - 1, x, " /   \\ ");
@@ -91,17 +95,16 @@ static inline void pretty_print_cell(const struct pretty_print_ctx *ctx,
   attroff(COLOR_PAIR(style));
 }
 
-static inline void prettry_print_cells(const struct rikudo *rikudo,
-                                       const struct pretty_print_ctx *ctx)
+static inline void prettry_print_cells(const struct solver *handle, const uint8_t *grid)
 {
-  pretty_print_cell(ctx, 0, 0, "X", CENTER);
-  for (unsigned i = 0; i < rikudo->nr; ++i) {
+  pretty_print_cell(0, 0, "X", CENTER);
+  for (unsigned i = 0; i < handle->rikudo->nr; ++i) {
     char str[3] = { };
-    if (rikudo->grid[i] != 0) {
-      int n = sprintf(str, "%u", rikudo->grid[i]);
+    if (grid[i] != 0) {
+      int n = sprintf(str, "%u", grid[i]);
       assert(n > 0 && n < 3);
     }
-    pretty_print_cell(ctx, coords[i].x, coords[i].y, str, get_style(rikudo, i));
+    pretty_print_cell(coords[i].x, coords[i].y, str, get_style(handle, i));
   }
 
 }
@@ -133,39 +136,50 @@ static inline void prettry_print_link(const struct coord *c1,
       mvprintw(y2, x1 + 6, "|");
     }
   }
-  attron(COLOR_PAIR(LINK));
+  attroff(COLOR_PAIR(LINK));
 }
 
-static inline void prettry_print_links(const struct rikudo *rikudo,
-                                       const struct pretty_print_ctx *ctx)
+static inline void prettry_print_links(const struct rikudo *rikudo)
 {
   for (unsigned i = 0; i < rikudo->nr_link; ++i) {
     const struct link *link = &rikudo->links[i];
     const struct coord *c1 = &coords[link->idx_1];
     const struct coord *c2 = &coords[link->idx_2];
     int x1, y1, x2, y2;
-    x1 = get_pp_x(ctx->col, c1->x);
-    y1 = get_pp_y(ctx->row, c1->y);
-    x2 = get_pp_x(ctx->col, c2->x);
-    y2 = get_pp_y(ctx->row, c2->y);
+    x1 = get_pp_x(ctx.col, c1->x);
+    y1 = get_pp_y(ctx.row, c1->y);
+    x2 = get_pp_x(ctx.col, c2->x);
+    y2 = get_pp_y(ctx.row, c2->y);
     prettry_print_link(c1, c2, x1, y1, x2, y2);
   }
 }
 
-static inline void prettry_print_meta(const struct rikudo *rikudo)
+static inline void prettry_print_meta(const struct solver *handle, uint8_t val)
 {
-  mvprintw(1, 1, "%-20s %12u", "start index", rikudo->start);
-  mvprintw(2, 1, "%-20s %12u", "end index", rikudo->end);
+  struct rikudo *rikudo = handle->rikudo;
+
+  mvprintw(1, 1, "%-20s %12u", "start index", handle->start);
+  mvprintw(2, 1, "%-20s %12u", "end index", handle->end);
   mvprintw(3, 1, "%-20s %12u", "number of cells", rikudo->nr);
   mvprintw(4, 1, "%-20s %12u", "number of links", rikudo->nr_link);
+  mvprintw(6, 1, "%-20s %12u", "value", val);
+  mvprintw(7, 1, "%-20s %12u", "failed", handle->failed);}
+
+void pretty_print_refresh(const struct solver *handle, uint8_t idx, uint8_t val)
+{
+  prettry_print_meta(handle, val);
+  prettry_print_cells(handle, handle->rikudo->grid);
+  prettry_print_links(handle->rikudo);
+  mvprintw(8, 1, "%-20s %12u", "current index", idx);
+  refresh();
+  getch();
 }
 
-void pretty_print_refresh(const struct rikudo *rikudo,
-                          const struct pretty_print_ctx *ctx)
+void pretty_print_solution(const struct solver *handle)
 {
-  prettry_print_meta(rikudo);
-  prettry_print_cells(rikudo, ctx);
-  prettry_print_links(rikudo, ctx);
+  prettry_print_meta(handle, handle->rikudo->nr);
+  prettry_print_cells(handle, handle->solution);
+  prettry_print_links(handle->rikudo);
   refresh();
   getch();
 }

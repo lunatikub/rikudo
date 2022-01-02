@@ -20,13 +20,9 @@ struct link {
 
 struct rikudo {
   uint8_t *grid;
-  bool *to_fill;
-  struct link *links;
-  enum level lvl;
   uint8_t nr;
+  struct link *links;
   uint8_t nr_link;
-  uint8_t start;
-  uint8_t end;
 };
 
 struct rikudo* rikudo_create(const uint8_t *grid,

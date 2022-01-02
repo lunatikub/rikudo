@@ -1,8 +1,8 @@
 
-test_beginner = executable(
-  'beginner',
+test_create = executable(
+  'create',
   'test.c',
-  'test_beginner.c',
+  'test_create.c',
   src,
   include_directories: [
     inc,
@@ -12,4 +12,4 @@ test_beginner = executable(
   dependencies: [ curses ],
 )
 
-test('beginner', test_beginner)
+test('create', test_create)

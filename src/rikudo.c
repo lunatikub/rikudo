@@ -1,28 +1,7 @@
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <rikudo.h>
-
-static inline void set_to_fill(struct rikudo *rikudo)
-{
-  rikudo->to_fill = calloc(rikudo->nr, sizeof(bool));
-  for (uint8_t i = 0; i < rikudo->nr; ++i) {
-    rikudo->to_fill[i] = (rikudo->grid[i] == 0);
-  }
-}
-
-static inline void set_start_end(struct rikudo *rikudo)
-{
-  for (uint8_t i = 0; i < rikudo->nr; ++i) {
-    if (rikudo->grid[i] == 1) {
-      rikudo->start = i;
-    } else if (rikudo->grid[i] == rikudo->nr) {
-      rikudo->end = i;
-    }
-  }
-  assert(rikudo->start != 0 && rikudo->end != 0);
-}
 
 static const uint8_t nr_from_level[] = {
   [BEGINNER] = 36,
@@ -40,18 +19,14 @@ struct rikudo* rikudo_create(const uint8_t *grid,
 {
   struct rikudo *rikudo = calloc(1, sizeof(*rikudo));
 
-  rikudo->lvl = lvl;
-  rikudo->nr = nr_from_level[lvl];
   rikudo->nr_link = nr_link;
+  rikudo->nr = nr_from_level[lvl];
 
   rikudo->grid = calloc(rikudo->nr, sizeof(uint8_t));
   memcpy(rikudo->grid, grid, sizeof(uint8_t) * rikudo->nr);
 
   rikudo->links = calloc(nr_link, sizeof(struct link));
   memcpy(rikudo->links, links, sizeof(struct link) * nr_link);
-
-  set_start_end(rikudo);
-  set_to_fill(rikudo);
 
   return rikudo;
 }
@@ -60,10 +35,5 @@ void rikudo_destroy(struct rikudo *rikudo)
 {
   free(rikudo->grid);
   free(rikudo->links);
-  free(rikudo->to_fill);
   free(rikudo);
 }
-
-/* void rikudo_solve(struct rikudo *rikudo) */
-/* { */
-/* } */

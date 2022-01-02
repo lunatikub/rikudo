@@ -42,6 +42,7 @@ test_inc = include_directories('tests')
 src = files(
   'src/rikudo.c',
   'src/pretty_print.c',
+  'src/solve.c',
 )
 
 cc = meson.get_compiler('c')

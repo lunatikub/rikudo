@@ -35,7 +35,7 @@ static const uint8_t neighbors[][NR_NEIGHBOR] = {
   /*   2 */ { 3, 1, 10, 11, 12, -1 },
   /*   3 */ { 14, 4, 2, 12, 13, -1 },
   /*   4 */ { 15, 16, 5, 3, 14, -1 },
-  /*   5 */ { 16, 17, 6, 70, 4, -1 },
+  /*   5 */ { 16, 17, 6, 0, 4, -1 },
 
   /* circle 2 */
   /*   6 */ { 17, 18, 19, 7, 0, 5 },
@@ -62,7 +62,7 @@ static const uint8_t neighbors[][NR_NEIGHBOR] = {
   /*  25 */ { 11, 10, 24, 45, 46, 26 },
   /*  26 */ { 27, 11, 25, 46, 47, 48 },
   /*  27 */ { 28, 12, 11, 26, 48, 49 },
-  /*  28 */ { 28, 13, 12, 27, 49, 50 },
+  /*  28 */ { 29, 13, 12, 27, 49, 50 },
   /*  29 */ { 52, 30, 13, 28, 50, 51 },
   /*  30 */ { 53, 31, 14, 13, 29, 52 },
   /*  31 */ { 54, 32, 15, 14, 30, 53 },
@@ -71,5 +71,15 @@ static const uint8_t neighbors[][NR_NEIGHBOR] = {
   /*  34 */ { 57, 58, 35, 17, 16, 33 },
   /*  35 */ { 58, 59, 36, 18, 17, 34 },
 };
+
+#define FOREACH_NEIGHBOR(IDX, NR, CODE)                 \
+  do {                                                  \
+    for (unsigned N = 0; N < NR_NEIGHBOR; ++N) {        \
+      uint8_t neighbor = neighbors[IDX][N];             \
+      if (neighbor != -1 && neighbor < NR) {            \
+        CODE;                                           \
+      }                                                 \
+    }                                                   \
+  } while(0)
 
 #endif /* !__NEIGHBORS_H__ */
