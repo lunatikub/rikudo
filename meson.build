@@ -31,8 +31,8 @@ flags = c_compiler.get_supported_arguments(
     '-Wpointer-arith',
     '-Wformat=2',
     '-pipe',
-    '-g3',
     '-pthread',
+    '-g3',
   ]
 )
 

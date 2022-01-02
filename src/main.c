@@ -5,20 +5,18 @@
 #include "opts.h"
 
 static const uint8_t grid[] = {
-  0,  0, 0, 1,  0, 0, 0, 0, 0,  17, 22, 36,
-  0,  0, 0, 0,  3, 0, 0, 0, 12, 0,  0,  0,
-  20, 0, 0, 34, 0, 0, 0, 0, 0,  28, 7,  0
-};
-
-static const uint8_t expected[] = {
-  15, 16, 23, 1,  2,  4,  5,  11, 14, 17, 22, 36,
-  24, 25, 26, 27, 3, 6, 9,  10, 12, 13, 18, 19,
-  20, 21, 35, 34, 33, 32, 31, 30, 29, 28, 7, 8
-};
-
-static const uint8_t nr_link = 5;
+  0, 16, 54, 0, 0, 0, 1, 0, 0,  0, 13, 0, 0, 60, 0, 36, 0,  0, 0,  0,
+  0, 0,  0,  0, 0, 0, 0, 0, 45, 0, 0,  0, 0, 0,  0, 21, 0,  0, 26, 0,
+  0, 0,  6,  0, 0, 0, 0, 0, 49, 0, 0,  0, 0, 0,  0, 39, 32, 0, 0,  0};
+/* static const uint8_t expected[] = { */
+/*   18, 16, 54, 56, 57, 19, 1,  2,  17, 15, 13, 53, 55, 60, 58, */
+/*   36, 35, 20, 22, 23, 24, 3,  7,  8,  14, 12, 52, 48, 45, 44, */
+/*   59, 37, 38, 33, 34, 21, 28, 27, 26, 25, 4,  5,  6,  9,  10, */
+/*   11, 51, 50, 49, 47, 46, 43, 42, 41, 40, 39, 32, 31, 30, 29}; */
+static const uint8_t nr_link = 8;
 static const struct link links[] = {
-  {6, 7}, {23, 24}, {16, 15}, {20, 19}, {18, 7},
+  {43, 23}, {11, 26}, {22, 23}, {41, 40},
+  {4, 14},  {20, 19}, {50, 49}, {16, 34},
 };
 
 int main(int argc, char **argv)
@@ -27,20 +25,9 @@ int main(int argc, char **argv)
     return 1;
   }
   pretty_print_init();
-  struct rikudo *rikudo = rikudo_create(grid, BEGINNER, links, nr_link);
+  struct rikudo *rikudo = rikudo_create(grid, EASY, links, nr_link);
 
   uint8_t *solution = rikudo_solve(rikudo);
-
-  #include <stdio.h>
-  printf("expected\n");
-  for (unsigned i = 0; i < rikudo->nr; ++i) {
-    printf("%u ", expected[i]);
-  }
-  printf("\nsolution\n");
-  for (unsigned i = 0; i < rikudo->nr; ++i) {
-    printf("%u ", solution[i]);
-  }
-  printf("\n");
 
   if (solution != NULL) {
     free(solution);
