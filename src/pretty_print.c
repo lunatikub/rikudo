@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "pretty_print.h"
+#include "opts.h"
 
 enum cell_style {
   NORMAL = 1,
@@ -11,15 +12,23 @@ enum cell_style {
   START,
   LINK,
 };
+
 struct pretty_print_ctx {
   int row;
   int col;
 };
 
+/**
+ * Global variable to keep informations for the
+ * pretty print of a rikudo grid.
+ */
 static struct pretty_print_ctx ctx;
 
 void pretty_print_init(void)
 {
+  if (opt_get_pretty_print() == false) {
+    return;
+  }
   initscr();
   getmaxyx(stdscr, ctx.row, ctx.col);
   curs_set(0);
@@ -33,6 +42,9 @@ void pretty_print_init(void)
 
 void pretty_print_exit(void)
 {
+  if (opt_get_pretty_print() == false) {
+    return;
+  }
   endwin();
 }
 
@@ -167,6 +179,9 @@ static inline void prettry_print_meta(const struct solver *handle, uint8_t val)
 
 void pretty_print_refresh(const struct solver *handle, uint8_t idx, uint8_t val)
 {
+  if (opt_get_pretty_print() == false) {
+    return;
+  }
   prettry_print_meta(handle, val);
   prettry_print_cells(handle, handle->rikudo->grid);
   prettry_print_links(handle->rikudo);
@@ -177,6 +192,9 @@ void pretty_print_refresh(const struct solver *handle, uint8_t idx, uint8_t val)
 
 void pretty_print_solution(const struct solver *handle)
 {
+  if (opt_get_pretty_print() == false) {
+    return;
+  }
   prettry_print_meta(handle, handle->rikudo->nr);
   prettry_print_cells(handle, handle->solution);
   prettry_print_links(handle->rikudo);

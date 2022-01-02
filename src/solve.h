@@ -21,6 +21,6 @@ struct solver {
  * Solve a rikudo grid.
  * Return the solution found, otherwise return NULL.
  */
-void rikudo_solve(struct rikudo *rikudo);
+uint8_t* rikudo_solve(struct rikudo *rikudo);
 
 #endif /* !__SOLVE_H__ */

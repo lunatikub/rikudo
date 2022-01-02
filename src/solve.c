@@ -101,7 +101,7 @@ static inline void find_start_end(struct solver *handle)
   }
 }
 
-void rikudo_solve(struct rikudo *rikudo)
+uint8_t* rikudo_solve(struct rikudo *rikudo)
 {
   struct solver handle = {
     .rikudo = rikudo,
@@ -116,4 +116,9 @@ void rikudo_solve(struct rikudo *rikudo)
   pretty_print_solution(&handle);
 
   free(handle.constant);
+
+  if (handle.solution_found == true) {
+    return handle.solution;
+  }
+  return NULL;
 }

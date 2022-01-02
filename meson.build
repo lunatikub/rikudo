@@ -43,6 +43,7 @@ src = files(
   'src/rikudo.c',
   'src/pretty_print.c',
   'src/solve.c',
+  'src/opts.c',
 )
 
 cc = meson.get_compiler('c')
