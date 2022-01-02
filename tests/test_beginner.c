@@ -1,82 +1,59 @@
+#include <stdlib.h>
+
 #include <rikudo.h>
+#include <solve.h>
 
 #include "test.h"
+#include "test_common.h"
 
 TEST_F(beginner, 1)
 {
-  static const uint8_t grid[] = {0,  0, 0, 1,  0, 0, 0, 0, 0,  17, 22, 36,
-                                 0,  0, 0, 0,  3, 0, 0, 0, 12, 0,  0,  0,
-                                 20, 0, 0, 34, 0, 0, 0, 0, 0,  28, 7,  0};
-
-  static const uint8_t solution[] = {
-    15, 16, 23, 1,  2,  4,  5,  11, 14, 17, 22, 36, 24, 25, 26, 27, 3, 6,
-    9,  10, 12, 13, 18, 19, 20, 21, 35, 34, 33, 32, 31, 30, 29, 28, 7, 8};
-
-  static const uint8_t nr_link = 5;
+  static const uint8_t grid[] = {0, 0, 10, 0, 0, 19, 0,  31, 33, 0, 36, 7,
+                                 0, 0, 0,  0, 0, 26, 28, 0,  0,  0, 1,  3,
+                                 0, 0, 0,  0, 0, 14, 0,  0,  22, 0, 0,  0};
+  static const uint8_t expected[] = {
+    34, 35, 10, 11, 18, 19, 27, 31, 33, 2, 36, 7,  9,  12, 17, 21, 20, 26,
+    28, 29, 30, 32, 1,  3,  4,  5,  6,  8, 13, 14, 15, 16, 22, 23, 24, 25};
+  static const uint8_t nr_link = 4;
   static const struct link links[] = {
-    {6, 7}, {23, 24}, {16, 15}, {20, 19}, {18, 7},
+    {28, 13}, {4, 14}, {13, 3}, {31, 14},
   };
 
-  struct rikudo *rikudo = rikudo_create(grid, BEGINNER, links, nr_link);
-
-  EXPECT_TRUE(rikudo->start == 3);
-  EXPECT_TRUE(rikudo->end == 11);
-
-  (void)solution;
-
-  rikudo_destroy(rikudo);
+  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
   return true;
 }
 
 TEST_F(beginner, 2)
 {
-  static const uint8_t grid[] = {0, 1, 0,  0,  0, 0,  0, 0, 15, 0,  0, 0,
-                                 4, 0, 24, 29, 0, 19, 0, 0, 36, 0,  0, 12,
-                                 9, 0, 0,  0,  0, 26, 0, 0, 0,  31, 0, 0};
-
-  static const uint8_t solution[] = {
-    17, 1,  2,  23, 22, 21, 18, 16, 15, 11, 10, 3,  4,  25, 24, 29, 20, 19,
-    34, 35, 36, 14, 13, 12, 9,  8,  7,  6,  5,  26, 27, 28, 30, 31, 32, 33};
-
-  static const uint8_t nr_link = 3;
+  static const uint8_t grid[] = {0,  32, 0, 36, 0, 0, 0, 0,  15, 0,  0,  0,
+                                 0,  4,  0, 28, 0, 0, 0, 20, 0,  0,  16, 0,
+                                 12, 0,  0, 0,  7, 0, 0, 0,  1,  26, 0,  0};
+  static const uint8_t expected[] = {
+    31, 32, 34, 36, 29, 30, 21, 18, 15, 14, 33, 9, 35, 4, 3, 28, 27, 22,
+    23, 20, 19, 17, 16, 13, 12, 11, 10, 8,  7,  6, 5,  2, 1, 26, 25, 24};
+  static const uint8_t nr_link = 5;
   static const struct link links[] = {
-    {6, 5}, {1, 7}, {36, 35},
+    {26, 25}, {7, 21}, {12, 2}, {34, 35}, {18, 35},
   };
 
-  struct rikudo *rikudo = rikudo_create(grid, BEGINNER, links, nr_link);
-
-  EXPECT_TRUE(rikudo->start == 1);
-  EXPECT_TRUE(rikudo->end == 20);
-
-  (void)solution;
-
-  rikudo_destroy(rikudo);
+  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
   return true;
 }
 
 TEST_F(beginner, 3)
 {
-  static const uint8_t grid[] = {6, 29, 0,  19, 0, 0,  0, 1, 0,  31, 27, 0,
-                                 0, 0,  0,  0,  0, 9,  0, 0, 0,  0,  0,  33,
-                                 0, 0,  36, 0,  0, 23, 0, 0, 15, 0,  12, 0};
-
-  static const uint8_t solution[] = {
-    6,  29, 28, 19, 18, 7,  5,  1,  30, 31, 27, 26, 20, 21, 17, 14, 8,  9,
-    10, 4,  3,  2,  32, 33, 34, 35, 36, 25, 24, 23, 22, 16, 15, 13, 12, 11};
-
-  static const uint8_t nr_link = 3;
+  static const uint8_t grid[] = {36, 0, 0, 0,  0, 1, 0, 25, 29, 30, 0,  6,
+                                 4,  0, 0, 15, 0, 0, 0, 0,  0,  0,  0,  0,
+                                 33, 0, 0, 9,  0, 0, 0, 0,  0,  18, 21, 0};
+  static const uint8_t expected[] = {
+    36, 35, 5,  3,  2,  1,  24, 25, 29, 30, 34, 6,  4,  11, 14, 15, 19, 20,
+    23, 26, 27, 28, 31, 32, 33, 7,  8,  9,  10, 12, 13, 16, 17, 18, 21, 22};
+  static const uint8_t nr_link = 4;
   static const struct link links[] = {
-    {32, 15}, {20, 7}, {22, 21},
+    {1, 10}, {26, 25}, {13, 28}, {35, 18},
   };
 
-  struct rikudo *rikudo = rikudo_create(grid, BEGINNER, links, nr_link);
-
-  EXPECT_TRUE(rikudo->start == 7);
-  EXPECT_TRUE(rikudo->end == 26);
-
-  (void)solution;
-
-  rikudo_destroy(rikudo);
+  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
   return true;
 }
 

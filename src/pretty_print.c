@@ -177,7 +177,7 @@ static inline void prettry_print_meta(const struct solver *handle, uint8_t val)
   mvprintw(6, 1, "%-20s %12u", "value", val);
   mvprintw(7, 1, "%-20s %12u", "failed", handle->failed);}
 
-void pretty_print_refresh(const struct solver *handle, uint8_t idx, uint8_t val)
+void pretty_print_current(const struct solver *handle, uint8_t idx, uint8_t val)
 {
   if (opt_get_pretty_print() == false) {
     return;

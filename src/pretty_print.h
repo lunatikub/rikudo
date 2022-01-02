@@ -8,7 +8,7 @@ void pretty_print_init(void);
 
 void pretty_print_exit(void);
 
-void pretty_print_refresh(const struct solver *handle, uint8_t idx, uint8_t val);
+void pretty_print_current(const struct solver *handle, uint8_t idx, uint8_t val);
 
 void pretty_print_solution(const struct solver *handle);
 

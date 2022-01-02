@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/* Difficulty of the rikudo to solve. */
 enum level {
   BEGINNER,
   EASY,
@@ -13,9 +14,10 @@ enum level {
   XL
 };
 
+/* Link between 2 cells. */
 struct link {
-  uint8_t idx_1;
-  uint8_t idx_2;
+  uint8_t idx_1; /* index of the cell 1. */
+  uint8_t idx_2; /* index of the cell 2. */
 };
 
 struct rikudo {
