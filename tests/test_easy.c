@@ -67,10 +67,10 @@ TEST_F(easy, 3)
   return true;
 }
 
-const static struct test beginner_tests[] = {
+const static struct test easy_tests[] = {
   TEST(easy, 1),
   TEST(easy, 2),
   TEST(easy, 3),
 };
 
-TEST_SUITE(beginner);
+TEST_SUITE(easy);

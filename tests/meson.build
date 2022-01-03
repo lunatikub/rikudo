@@ -1,30 +1,28 @@
 
-test_beginner = executable(
+tests = [
   'beginner',
-  'test.c',
-  'test_beginner.c',
-  src,
-  include_directories: [
-    inc,
-    test_inc,
-  ],
-  c_args: flags + ['-DUNIT_TEST_TARGET'],
-  dependencies: [ curses ],
-)
-
-test('beginner', test_beginner)
-
-test_easy = executable(
   'easy',
-  'test.c',
-  'test_easy.c',
-  src,
-  include_directories: [
-    inc,
-    test_inc,
-  ],
-  c_args: flags + ['-DUNIT_TEST_TARGET'],
-  dependencies: [ curses ],
-)
+  'medium',
+]
 
-test('easy', test_easy)
+foreach t : tests
+  warning(t)
+
+  src_test = 'test_' + t + '.c'
+  warning(src_test)
+
+  test_exec = executable(
+    t,
+    'test.c',
+    src_test,
+    src,
+    include_directories: [
+      inc,
+      test_inc,
+    ],
+    c_args: flags + ['-DUNIT_TEST_TARGET'],
+    dependencies: [ curses ],
+  )
+
+  test(t, test_exec)
+endforeach
