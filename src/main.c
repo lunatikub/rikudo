@@ -14,6 +14,7 @@ static struct rikudo* rikudo_parse(void)
   uint8_t nr_link = opt_get_nr_link();
   uint8_t nr;
   uint8_t grid[MAX];
+  struct link links[MAX];
 
   if (level_parse(lvl, &nr) == false) {
     return NULL;
@@ -24,17 +25,11 @@ static struct rikudo* rikudo_parse(void)
   if (grid_parse(opt_get_grid(), grid, nr) == false) {
     return NULL;
   }
-
-  printf("level:   %u\n", lvl);
-  printf("nr:      %u\n", nr);
-  printf("nr_linl: %u\n",  nr_link);
-  printf("grid:    ");
-  for (unsigned i = 0; i < nr; ++i) {
-    printf("%u ", grid[i]);
+  if (links_parse(opt_get_links(), links, nr_link) == false) {
+    return NULL;
   }
-  printf("\n");
 
-  return rikudo_create(grid, nr, NULL, 0);
+  return rikudo_create(grid, nr, links, nr_link);
 #undef MAX
 }
 
@@ -50,15 +45,14 @@ int main(int argc, char **argv)
     return -1;
   }
 
+  uint8_t *solution = rikudo_solve(rikudo);
+  if (solution != NULL) {
+    free(solution);
+  }
+
   rikudo_destroy(rikudo);
   options_clean();
   pretty_print_exit();
 
   return 0;
 }
-
-/* uint8_t *solution = rikudo_solve(rikudo); */
-/* if (solution != NULL) { */
-/*   free(solution); */
-/* } */
-/* links_parse("28013,13028,12026,26012,12003,3012,16032,32016", 4); */

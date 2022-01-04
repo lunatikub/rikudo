@@ -89,7 +89,7 @@ static inline bool strtoint(const char *start, const char *end, int *v)
   return true;
 }
 
-static inline bool add_value(struct lexer *lexer, uint8_t *grid, uint8_t *n)
+static inline bool add_cell(struct lexer *lexer, uint8_t *grid, uint8_t *n)
 {
   int val;
   const char *start = &lexer->str[lexer->offset_start];
@@ -121,7 +121,7 @@ bool grid_parse(const char *str, uint8_t *grid, uint8_t nr)
     if (lexer.token != TOKEN_VALUE) {
       return false;
     }
-    if (add_value(&lexer, grid, &n) == false) {
+    if (add_cell(&lexer, grid, &n) == false) {
       return false;
     }
     lexer_token_eat(&lexer);
@@ -157,4 +157,93 @@ bool level_parse(enum level level, uint8_t *nr)
     return true;
   }
   return false;
+}
+
+static inline int get_index(const char *start, unsigned off, unsigned len)
+
+{
+  char tmp[128];
+
+  strncpy(tmp, start + off, len);
+  tmp[len] = 0;
+  return atoi(tmp) - 1;
+}
+
+static inline bool add_link(struct lexer *lexer, struct link *links, uint8_t *n)
+{
+  const char *start = &lexer->str[lexer->offset_start];
+  const char *end = &lexer->str[lexer->offset_end];
+
+  static int len_1;
+  static int len_2;
+  static int turn = 0;
+  int idx_1, idx_2;
+
+  if (turn % 2 == 0) {
+    len_1 = (int)(end - start);
+  } else {
+    len_2 = (int)(end - start);
+    if (len_1 == 5) {
+      if (len_2 == 5) {
+        idx_1 = get_index(start, 0, 2);
+        idx_2 = get_index(start, 3, 2);
+      } else {
+        idx_1 = get_index(start, 0, 1);
+        idx_2 = get_index(start, 2, 2);
+      }
+    } else {
+      if (len_2 == 5) {
+        idx_1 = get_index(start, 0, 2);
+        idx_2 = get_index(start, 4, 1);
+      } else {
+        idx_1 = get_index(start, 0, 1);
+        idx_2 = get_index(start, 3, 1);
+      }
+    }
+    links[*n].idx_1 = idx_1;
+    links[*n].idx_2 = idx_2;
+    ++(*n);
+  }
+
+  ++turn;
+  return true;
+}
+
+bool links_parse(const char *str, struct link *links, uint8_t nr)
+{
+  struct lexer lexer = {
+    .str = str,
+    .len = strlen(str),
+    .offset_start = 0,
+    .offset_end = 0,
+  };
+
+  uint8_t n = 0;
+
+  while (true) {
+    /* value */
+    if (lexer_token_fill(&lexer) == false) {
+      return false;
+    }
+    if (lexer.token != TOKEN_VALUE) {
+      return false;
+    }
+    if (add_link(&lexer, links, &n) == false) {
+      return false;
+    }
+    lexer_token_eat(&lexer);
+    /* command or end */
+    if (lexer_token_fill(&lexer) == false) {
+      return false;
+    }
+    if (lexer.token == TOKEN_END) {
+      break;
+    }
+    if (lexer.token != TOKEN_COMMA) {
+      return false;
+    }
+    lexer_token_eat(&lexer);
+  }
+
+  return n == nr;
 }
