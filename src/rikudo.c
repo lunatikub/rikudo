@@ -3,15 +3,6 @@
 
 #include <rikudo.h>
 
-static const uint8_t nr_from_level[] = {
-  [BEGINNER] = 36,
-  [EASY] = 60,
-  [MEDIUM] = 60,
-  [HARD] = 90,
-  [EVIL] = 90,
-  [XL] = 126,
-};
-
 struct rikudo* rikudo_create(const uint8_t *grid,
                              enum level lvl,
                              const struct link *links,

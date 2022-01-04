@@ -6,12 +6,21 @@
 
 /* Difficulty of the rikudo to solve. */
 enum level {
-  BEGINNER,
+  BEGINNER = 1,
   EASY,
   MEDIUM,
   HARD,
   EVIL,
   XL
+};
+
+static const uint8_t nr_from_level[] = {
+  [BEGINNER] = 36,
+  [EASY] = 60,
+  [MEDIUM] = 60,
+  [HARD] = 90,
+  [EVIL] = 90,
+  [XL] = 126,
 };
 
 /* Link between 2 cells. */

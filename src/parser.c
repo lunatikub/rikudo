@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "rikudo.h"
 #include "parser.h"
 
 #define COMMA ','
@@ -88,14 +89,17 @@ static inline bool strtoint(const char *start, const char *end, int *v)
   return true;
 }
 
-static inline void add(struct lexer *lexer, uint8_t *grid, uint8_t *n)
+static inline bool add_value(struct lexer *lexer, uint8_t *grid, uint8_t *n)
 {
   int val;
   const char *start = &lexer->str[lexer->offset_start];
   const char *end = &lexer->str[lexer->offset_end];
-  strtoint(start, end, &val);
+  if (strtoint(start, end, &val) == false) {
+    return false;
+  }
   grid[*n] = val;
   ++(*n);
+  return true;
 }
 
 bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
@@ -108,9 +112,8 @@ bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
   };
 
   uint8_t n = 0;
-  bool ret = true;
 
-  while (ret) {
+  while (true) {
     /* value */
     if (lexer_token_fill(&lexer) == false) {
       return false;
@@ -118,7 +121,9 @@ bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
     if (lexer.token != TOKEN_VALUE) {
       return false;
     }
-    add(&lexer, grid, &n);
+    if (add_value(&lexer, grid, &n) == false) {
+      return false;
+    }
     lexer_token_eat(&lexer);
     /* command or end */
     if (lexer_token_fill(&lexer) == false) {
@@ -134,4 +139,19 @@ bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
   }
 
   return n == nr;
+}
+
+bool parse_level(const char *str, enum level *level, uint8_t *nr)
+{
+  int v;
+  const char *end = str + strlen(str);
+  if (strtoint(str, end, &v) == false) {
+    return false;
+  }
+  if (v >= BEGINNER && v <= XL) {
+    *level = v;
+    return true;
+  }
+  *nr = nr_from_level[level];
+  return false;
 }

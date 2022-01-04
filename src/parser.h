@@ -8,4 +8,9 @@
  */
 bool parse_grid(const char *str, uint8_t *grid, uint8_t nr);
 
+/**
+ * Parse the level of a rikudo.
+ */
+bool parse_level(const char *str, enum level *level, uint8_t *nr);
+
 #endif /* !_PARSER_H__ */
