@@ -5,6 +5,7 @@
 
 OPT_BOOL(pretty_print)
 OPT_INT(step_by_step)
+OPT_STR(grid)
 
 /**
  * The following code is used to ensure that each file which
@@ -22,4 +23,10 @@ OPT_INT(step_by_step)
   #error "Macro OPT_INT must be defined !"
 #else
   #undef OPT_INT
+#endif
+
+#if !defined OPT_STR
+  #error "Macro OPT_STR must be defined !"
+#else
+  #undef OPT_STR
 #endif

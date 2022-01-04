@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -8,12 +9,14 @@
 struct options {
 #define OPT_BOOL(name) bool name;
 #define OPT_INT(name) int name;
+#define OPT_STR(name) char *name;
 #include "opts_def.h"
 };
 
 static struct option long_options[] = {
   { "pretty-print",  no_argument,       0, 'p' },
   { "step-by-step",  required_argument, 0, 's' },
+  { "grid",          required_argument, 0, 'g' },
   { 0,               0,                 0,  0 },
 };
 
@@ -23,7 +26,21 @@ static struct option long_options[] = {
  */
 static struct options opts;
 
-bool parse_options(int argc, char **argv)
+static inline bool check_mandatory_opts(void)
+{
+  if (opts.grid == NULL) {
+    fprintf(stderr, "option '--grid' is mandatory\n");
+    return false;
+  }
+  return true;
+}
+
+void options_clean(void)
+{
+  free(opts.grid);
+}
+
+bool options_parse(int argc, char **argv)
 {
   int c;
 
@@ -42,15 +59,19 @@ bool parse_options(int argc, char **argv)
       case 's':
         opts.step_by_step = atoi(optarg);
         break;
+      case 'g':
+        opts.grid = strdup(optarg);
+        break;
       default:
         return false;
     }
   }
 
-  return true;
+  return check_mandatory_opts();
 }
 
 #define OPT_BOOL(name) bool opt_get_ ## name(void) { return opts.name; }
 #define OPT_INT(name) int opt_get_ ## name(void) { return opts.name; }
+#define OPT_STR(name) char* opt_get_ ## name(void) { return opts.name; }
 
 #include "opts_def.h"
