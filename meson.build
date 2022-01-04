@@ -44,6 +44,7 @@ src = files(
   'src/pretty_print.c',
   'src/solve.c',
   'src/opts.c',
+  'src/parser.c',
 )
 
 cc = meson.get_compiler('c')
