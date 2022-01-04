@@ -102,7 +102,7 @@ static inline bool add_value(struct lexer *lexer, uint8_t *grid, uint8_t *n)
   return true;
 }
 
-bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
+bool grid_parse(const char *str, uint8_t *grid, uint8_t nr)
 {
   struct lexer lexer = {
     .str = str,
@@ -141,17 +141,20 @@ bool parse_grid(const char *str, uint8_t *grid, uint8_t nr)
   return n == nr;
 }
 
-bool parse_level(const char *str, enum level *level, uint8_t *nr)
+static const uint8_t nr_from_level[] = {
+  [BEGINNER] = 36,
+  [EASY] = 60,
+  [MEDIUM] = 60,
+  [HARD] = 90,
+  [EVIL] = 90,
+  [XL] = 126,
+};
+
+bool level_parse(enum level level, uint8_t *nr)
 {
-  int v;
-  const char *end = str + strlen(str);
-  if (strtoint(str, end, &v) == false) {
-    return false;
-  }
-  if (v >= BEGINNER && v <= XL) {
-    *level = v;
+  if (level >= BEGINNER && level <= XL) {
+    *nr = nr_from_level[level];
     return true;
   }
-  *nr = nr_from_level[level];
   return false;
 }

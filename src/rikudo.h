@@ -14,15 +14,6 @@ enum level {
   XL
 };
 
-static const uint8_t nr_from_level[] = {
-  [BEGINNER] = 36,
-  [EASY] = 60,
-  [MEDIUM] = 60,
-  [HARD] = 90,
-  [EVIL] = 90,
-  [XL] = 126,
-};
-
 /* Link between 2 cells. */
 struct link {
   uint8_t idx_1; /* index of the cell 1. */

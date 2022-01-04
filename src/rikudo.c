@@ -4,14 +4,14 @@
 #include <rikudo.h>
 
 struct rikudo* rikudo_create(const uint8_t *grid,
-                             enum level lvl,
+                             uint32_t nr,
                              const struct link *links,
                              uint8_t nr_link)
 {
   struct rikudo *rikudo = calloc(1, sizeof(*rikudo));
 
   rikudo->nr_link = nr_link;
-  rikudo->nr = nr_from_level[lvl];
+  rikudo->nr = nr;
 
   rikudo->grid = calloc(rikudo->nr, sizeof(uint8_t));
   memcpy(rikudo->grid, grid, sizeof(uint8_t) * rikudo->nr);

@@ -17,6 +17,7 @@ static struct option long_options[] = {
   { "pretty-print",  no_argument,       0, 'p' },
   { "step-by-step",  required_argument, 0, 's' },
   { "grid",          required_argument, 0, 'g' },
+  { "level",         required_argument, 0, 'l' },
   { 0,               0,                 0,  0 },
 };
 
@@ -29,7 +30,11 @@ static struct options opts;
 static inline bool check_mandatory_opts(void)
 {
   if (opts.grid == NULL) {
-    fprintf(stderr, "option '--grid' is mandatory\n");
+    fprintf(stderr, "option '--grid' is mandatory...\n");
+    return false;
+  }
+  if (opts.level == 0) {
+    fprintf(stderr, "options '--level' is mandatory...\n");
     return false;
   }
   return true;
@@ -61,6 +66,9 @@ bool options_parse(int argc, char **argv)
         break;
       case 'g':
         opts.grid = strdup(optarg);
+        break;
+      case 'l':
+        opts.level = atoi(optarg);;
         break;
       default:
         return false;

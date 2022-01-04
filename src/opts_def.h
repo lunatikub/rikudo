@@ -6,6 +6,7 @@
 OPT_BOOL(pretty_print)
 OPT_INT(step_by_step)
 OPT_STR(grid)
+OPT_INT(level)
 
 /**
  * The following code is used to ensure that each file which
