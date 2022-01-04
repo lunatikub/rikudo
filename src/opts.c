@@ -18,6 +18,8 @@ static struct option long_options[] = {
   { "step-by-step",  required_argument, 0, 's' },
   { "grid",          required_argument, 0, 'g' },
   { "level",         required_argument, 0, 'l' },
+  { "nr-link",       required_argument, 0, 'n' },
+  { "links",         required_argument, 0, 'z' },
   { 0,               0,                 0,  0 },
 };
 
@@ -37,12 +39,21 @@ static inline bool check_mandatory_opts(void)
     fprintf(stderr, "options '--level' is mandatory...\n");
     return false;
   }
+  if (opts.nr_link == 0) {
+    fprintf(stderr, "options '--nr-link' is mandatory...\n");
+    return false;
+  }
+  if (opts.links == NULL) {
+    fprintf(stderr, "option '--links' is mandatory...\n");
+    return false;
+  }
   return true;
 }
 
 void options_clean(void)
 {
   free(opts.grid);
+  free(opts.links);
 }
 
 bool options_parse(int argc, char **argv)
@@ -69,6 +80,12 @@ bool options_parse(int argc, char **argv)
         break;
       case 'l':
         opts.level = atoi(optarg);;
+        break;
+      case 'n':
+        opts.nr_link = atoi(optarg);
+        break;
+      case 'z':
+        opts.links = strdup(optarg);
         break;
       default:
         return false;

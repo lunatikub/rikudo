@@ -9,29 +9,33 @@
 
 static struct rikudo* rikudo_parse(void)
 {
+#define MAX 126
   enum level lvl = opt_get_level();
+  uint8_t nr_link = opt_get_nr_link();
   uint8_t nr;
-#define MAX_NR_CELL 126
-  uint8_t grid[MAX_NR_CELL];
-#undef MAX_NR_CELL
+  uint8_t grid[MAX];
 
   if (level_parse(lvl, &nr) == false) {
     return NULL;
   }
-
+  if (nr >= MAX) {
+    return NULL;
+  }
   if (grid_parse(opt_get_grid(), grid, nr) == false) {
     return NULL;
   }
 
-  printf("level: %u\n", lvl);
-  printf("nr:    %u\n", nr);
-  printf("grid:  ");
+  printf("level:   %u\n", lvl);
+  printf("nr:      %u\n", nr);
+  printf("nr_linl: %u\n",  nr_link);
+  printf("grid:    ");
   for (unsigned i = 0; i < nr; ++i) {
     printf("%u ", grid[i]);
   }
   printf("\n");
 
   return rikudo_create(grid, nr, NULL, 0);
+#undef MAX
 }
 
 int main(int argc, char **argv)
@@ -57,3 +61,4 @@ int main(int argc, char **argv)
 /* if (solution != NULL) { */
 /*   free(solution); */
 /* } */
+/* links_parse("28013,13028,12026,26012,12003,3012,16032,32016", 4); */

@@ -19,7 +19,7 @@ TEST_F(beginner, 1)
     {28, 13}, {4, 14}, {13, 3}, {31, 14},
   };
 
-  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
+  TEST_RIKUDO(grid, 36, expected, links, nr_link);
   return true;
 }
 
@@ -36,7 +36,7 @@ TEST_F(beginner, 2)
     {26, 25}, {7, 21}, {12, 2}, {34, 35}, {18, 35},
   };
 
-  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
+  TEST_RIKUDO(grid, 36, expected, links, nr_link);
   return true;
 }
 
@@ -53,7 +53,7 @@ TEST_F(beginner, 3)
     {1, 10}, {26, 25}, {13, 28}, {35, 18},
   };
 
-  TEST_RIKUDO(grid, BEGINNER, expected, links, nr_link);
+  TEST_RIKUDO(grid, 36, expected, links, nr_link);
   return true;
 }
 

@@ -23,7 +23,7 @@ TEST_F(easy, 1)
     {4, 14},  {20, 19}, {50, 49}, {16, 34},
   };
 
-  TEST_RIKUDO(grid, EASY, expected, links, nr_link);
+  TEST_RIKUDO(grid, 60, expected, links, nr_link);
   return true;
 }
 
@@ -43,7 +43,7 @@ TEST_F(easy, 2)
     {51, 29}, {37, 36}, {14, 3}, {54, 53}, {28, 27}, {42, 41},
   };
 
-  TEST_RIKUDO(grid, EASY, expected, links, nr_link);
+  TEST_RIKUDO(grid, 60, expected, links, nr_link);
   return true;
 }
 
@@ -63,7 +63,7 @@ TEST_F(easy, 3)
     {15, 33}, {28, 12}, {14, 4}, {8, 1}, {19, 6}, {22, 8},
   };
 
-  TEST_RIKUDO(grid, EASY, expected, links, nr_link);
+  TEST_RIKUDO(grid, 60, expected, links, nr_link);
   return true;
 }
 

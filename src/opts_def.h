@@ -7,6 +7,8 @@ OPT_BOOL(pretty_print)
 OPT_INT(step_by_step)
 OPT_STR(grid)
 OPT_INT(level)
+OPT_INT(nr_link)
+OPT_STR(links)
 
 /**
  * The following code is used to ensure that each file which
